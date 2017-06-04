@@ -1,5 +1,6 @@
-Project member: Cuiqing Li
-Date: June 2017
+### Project member: Cuiqing Li
+
+### Date: June 2017
 
 # Unscented Kalman Filter Project Starter Code
 Self-Driving Car Engineer Nanodegree Program

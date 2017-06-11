@@ -17,8 +17,8 @@ int main() {
 * Programming assignment calls
 *******************************************************************************/
 
-    MatrixXd Xsig_aug = MatrixXd(15, 7);
-    ukf.AugmentedSigmaPoints(&Xsig_aug);
+    MatrixXd Xsig_pred = MatrixXd(15, 5);
+    ukf.SigmaPointPrediction(&Xsig_pred);
 
 	return 0;
 }

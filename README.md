@@ -39,6 +39,9 @@ OUTPUT: values provided by the c++ program to the simulator
 ["rmse_vy"]
 ```
 
+### A picture display CTRV model we used in this project:
+![png](CTRV.png) 
+
 ### Other Important Dependencies
 
 * cmake >= v3.5

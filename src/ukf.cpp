@@ -58,16 +58,16 @@ UKF::UKF() {
   lambda_ = 3 - n_aug_;
 
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
-  weights = VectorXd(2*n_aug+1);
-  double weight_0 = lambda/(lambda+n_aug);
+  weights = VectorXd(2*n_aug_+1);
+  double weight_0 = lambda_/(lambda_+n_aug_);
   weights(0) = weight_0;
-  for (int i=1; i<2*n_aug+1; i++) {  //2n+1 weights
-      double weight = 0.5/(n_aug+lambda);
+  for (int i=1; i<2*n_aug_+1; i++) {  //2n+1 weights
+      double weight = 0.5/(n_aug_+lambda_);
       weights(i) = weight;
   }
 
   is_initialized_=false;
-  p_ << 1,0,0,0,0,
+  P_ << 1,0,0,0,0,
         0,1,0,0,0,
         0,0,1,0,0,
         0,0,0,1,0,
@@ -80,7 +80,7 @@ UKF::~UKF() {}
  * @param {MeasurementPackage} meas_package The latest measurement data of
  * either radar or laser.
  */
-void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
+void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
   /*****************************************************************************
  *  Initialization
  ****************************************************************************/
@@ -95,7 +95,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
             */
             double cosval=cos(measurement_pack.raw_measurements_[1]);
             double sinval=sin(measurement_pack.raw_measurements_[1]);
-            double ro=meas_package.raw_measurements_[1];
+            double ro=measurement_pack.raw_measurements_[1];
             x_ << measurement_pack.raw_measurements_[0]*cosval, measurement_pack.raw_measurements_[0]*sinval, 0, ro, 0;
             previous_timestamp_ = measurement_pack.timestamp_;
           }else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
@@ -142,7 +142,7 @@ void UKF::Prediction(double delta_t) {
         MatrixXd Xsig_aug = MatrixXd(n_aug_, 2 * n_aug_ + 1);
 
         //create augmented mean state
-        x_aug.head(5) = x;
+        x_aug.head(5) = x_;
         x_aug(5) = 0;
         x_aug(6) = 0;
         //create augmented covariance matrix

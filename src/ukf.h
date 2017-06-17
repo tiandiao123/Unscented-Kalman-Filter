@@ -48,6 +48,9 @@ public:
   int n_aug_;
   ///* Sigma point spreading parameter
   double lambda_;
+
+  // previous time
+  long long previous_timestamp_;
   /**
    * Constructor
    */

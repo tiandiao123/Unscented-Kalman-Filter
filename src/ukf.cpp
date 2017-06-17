@@ -215,7 +215,7 @@ void UKF::Prediction(double delta_t) {
         while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
         while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
 
-        P_ = P_ + weights(i) * x_diff * x_diff.transpose() ;
+        P_ = P_ + weights(i) * x_diff * x_diff.transpose();
       }
 
 }
@@ -231,6 +231,30 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the lidar NIS.
   */
+
+  VectorXd z = VectorXd(2);
+  z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1];
+
+  H_laser_ = MatrixXd(2, 5);
+  H_laser_<<1,0,0,0,0,
+            0,1,0,0,0;
+  VectorXd z_pred = H_ * x_;
+  VectorXd y = z - z_pred;
+  MatrixXd Ht = H_.transpose();
+  MatrixXd R_lasr_=MatrixXd(2,2);
+  R_lasr_<< std_laspx,0,
+             0,std_laspy;
+  MatrixXd S = H_ * P_ * Ht + R_;
+  MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
+  MatrixXd K = PHt * Si;
+
+
+  x_ = x_ + (K * y);
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
+  P_ = (I - K * H_) * P_;
+
 }
 
 /**
@@ -293,7 +317,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
               0, 0,std_radrd_*std_radrd_;
       S = S + R;
 
-      VectorXd z = VectorXd(n_z);
+      VectorXd z = VectorXd(3);
       z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], meas_package.raw_measurements_[2];
 
       //create matrix for cross correlation Tc

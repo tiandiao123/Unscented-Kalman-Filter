@@ -55,7 +55,7 @@ UKF::UKF() {
   n_x_ = 5;
   n_aug_ = 7;
   //define spreading parameter
-  lambda = 3 - n_aug_;
+  lambda_ = 3 - n_aug_;
 
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
   weights = VectorXd(2*n_aug+1);

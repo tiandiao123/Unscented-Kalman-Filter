@@ -148,18 +148,18 @@ void UKF::Prediction(double delta_t) {
         //create augmented covariance matrix
        P_aug.fill(0.0);
        P_aug.topLeftCorner(5,5) = P_;
-       P_aug(5,5) = std_a*std_a;
-       P_aug(6,6) = std_yawdd*std_yawdd;
+       P_aug(5,5) = std_a_*std_a_;
+       P_aug(6,6) = std_yawdd_*std_yawdd_;
 
        //create square root matrix
       MatrixXd L = P_aug.llt().matrixL();
 
       //create augmented sigma points
       Xsig_aug.col(0)  = x_aug;
-      for (int i = 0; i< n_aug; i++)
+      for (int i = 0; i< n_aug_; i++)
       {
-        Xsig_aug.col(i+1)       = x_aug + sqrt(lambda+n_aug) * L.col(i);
-        Xsig_aug.col(i+1+n_aug) = x_aug - sqrt(lambda+n_aug) * L.col(i);
+        Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * L.col(i);
+        Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * L.col(i);
       }
 
       //predict sigma points
@@ -202,12 +202,12 @@ void UKF::Prediction(double delta_t) {
 
       //predicted state mean
       x_.fill(0.0);
-      for (int i = 0; i < 2 * n_aug + 1; i++) {  //iterate over sigma points
+      for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
         x_ = x_+ weights(i) * Xsig_pred_.col(i);
       }
 
       P_.fill(0.0);
-      for (int i = 0; i < 2 * n_aug + 1; i++) {  //iterate over sigma points
+      for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
 
         // state difference
         VectorXd x_diff = Xsig_pred_.col(i) - x_;
@@ -235,15 +235,20 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   VectorXd z = VectorXd(2);
   z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1];
 
-  H_laser_ = MatrixXd(2, 5);
+  MatrixXd H_laser_ = MatrixXd(2, 5);
   H_laser_<<1,0,0,0,0,
             0,1,0,0,0;
-  VectorXd z_pred = H_ * x_;
+  MatrixXd H_=H_laser_;
+
+  VectorXd z_pred = H_* x_;
   VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
-  MatrixXd R_lasr_=MatrixXd(2,2);
-  R_lasr_<< std_laspx,0,
-             0,std_laspy;
+  MatrixXd R_laser_=MatrixXd(2,2);
+  
+  R_laser_<< std_laspx_,0,
+             0,std_laspy_;
+  MatrixXd R_=R_laser_;
+  
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
@@ -290,16 +295,16 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
       //mean predicted measurement
       //mean predicted measurement
-      VectorXd z_pred = VectorXd(n_z);
+      VectorXd z_pred = VectorXd(3);
       z_pred.fill(0.0);
-      for (int i=0; i < 2*n_aug+1; i++) {
+      for (int i=0; i < 2*n_aug_+1; i++) {
           z_pred = z_pred + weights(i) * Zsig.col(i);
       }
 
       //measurement covariance matrix S
       MatrixXd S = MatrixXd(3,3);
       S.fill(0.0);
-      for (int i = 0; i < 2 * n_aug + 1; i++) {  //2n+1 simga points
+      for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
         //residual
         VectorXd z_diff = Zsig.col(i) - z_pred;
 
@@ -311,7 +316,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
       }
 
       //add measurement noise covariance matrix
-      MatrixXd R = MatrixXd(n_z,n_z);
+      MatrixXd R = MatrixXd(3,3);
       R <<    std_radr_*std_radr_, 0, 0,
               0, std_radphi_*std_radphi_, 0,
               0, 0,std_radrd_*std_radrd_;
@@ -321,11 +326,11 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
       z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], meas_package.raw_measurements_[2];
 
       //create matrix for cross correlation Tc
-      MatrixXd Tc = MatrixXd(n_x, 3);
+      MatrixXd Tc = MatrixXd(n_x_, 3);
 
       //calculate cross correlation matrix
       Tc.fill(0.0);
-      for (int i = 0; i < 2 * n_aug + 1; i++) {  //2n+1 simga points
+      for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 
         //residual
         VectorXd z_diff = Zsig.col(i) - z_pred;
@@ -353,8 +358,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
       while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
 
       //update state mean and covariance matrix
-      x = x + K * z_diff;
+      x_ = x_ + K * z_diff;
       P_ = P_ - K*S*K.transpose();
 
   }
-}
+//}

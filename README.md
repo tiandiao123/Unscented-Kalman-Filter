@@ -4,6 +4,11 @@
 
 # Unscented Kalman Filter Project
 
+### A final result demo of this project:
+In this demo, the car can predict its position corrently based on Unscented Kalman fileter using the implemented algorithms. In this demo, the green dots represent the predicted location of every second, and the colorful dots are measurement points of the car from resource of radar and lidar. 
+
+![gif](result.gif)
+
 ### Description of The Project
 In this project utilize an Unscented Kalman Filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower that the tolerance outlined in the project reburic. 
 
@@ -41,11 +46,6 @@ OUTPUT: values provided by the c++ program to the simulator
 
 ### A picture display CTRV model we used in this project:
 ![png](CTRV.png) 
-
-### Here is a final demo:
-In this demo, the car can predict its position corrently based on Unscented Kalman fileter using the implemented algorithms. In this demo, the green dots represent the predicted location of every second, and the colorful dots are measurement points of the car from resource of radar and lidar. 
-
-![gif](result.gif)
 
 ### Other Important Dependencies
 

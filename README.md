@@ -44,7 +44,8 @@ OUTPUT: values provided by the c++ program to the simulator
 
 ### Here is a final demo:
 In this demo, the car can predict its position corrently based on Unscented Kalman fileter using the implemented algorithms. In this demo, the green dots represent the predicted location of every second, and the colorful dots are measurement points of the car from resource of radar and lidar. 
-![gif](performance.gif)
+
+![gif](result.gif)
 
 ### Other Important Dependencies
 
